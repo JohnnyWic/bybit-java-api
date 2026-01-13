@@ -1,9 +1,9 @@
 package com.bybit.api.examples.http.sync;
 
 import com.bybit.api.client.domain.spot.SpotMarginDataRequest;
-import com.bybit.api.client.domain.spot.SwitchStatus;
-import com.bybit.api.client.domain.spot.marginTrade.VIPMarginDataRequest;
 import com.bybit.api.client.service.BybitApiClientFactory;
+
+import java.util.Map;
 
 public class UTASpotMarginExample {
     public static void main(String[] args) {
@@ -25,5 +25,20 @@ public class UTASpotMarginExample {
         // Get Status And Leverage
         var utaSpotLeverageState = client.getUTASpotMarginTradeLeverageState();
         System.out.println(utaSpotLeverageState);
+
+        // Set Status And Leverage
+        Map<String, Object> setUTASpotMarginTradeAutoRepayModeRequest = Map.ofEntries(
+                Map.entry("currency", "ETH"),
+                Map.entry("autoRepayMode", "0")
+        );
+        var setAutoRepayResponse = client.setUTASpotMarginTradeAutoRepayMode(setUTASpotMarginTradeAutoRepayModeRequest);
+        System.out.println(setAutoRepayResponse);
+
+        // Get Status And Leverage
+        Map<String, Object> getUTASpotMarginTradeAutoRepayModeRequest = Map.ofEntries(
+                Map.entry("currency", "ETH")
+        );
+        var getAutoRepayResponse = client.getUTASpotMarginTradeAutoRepayMode(getUTASpotMarginTradeAutoRepayModeRequest);
+        System.out.println(getAutoRepayResponse);
     }
 }

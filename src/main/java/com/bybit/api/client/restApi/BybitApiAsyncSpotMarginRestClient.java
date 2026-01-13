@@ -2,6 +2,8 @@ package com.bybit.api.client.restApi;
 
 import com.bybit.api.client.domain.spot.SpotMarginDataRequest;
 
+import java.util.Map;
+
 public interface BybitApiAsyncSpotMarginRestClient {
     // Spot Endpoints
     // Spot Leverage Token
@@ -21,6 +23,11 @@ public interface BybitApiAsyncSpotMarginRestClient {
     void setUTASpotMarginTrade(String mode, BybitApiCallback<Object> callback);
 
     void setUTASpotMarginTradeLeverage(String leverage, BybitApiCallback<Object> callback);
+
+
+    void setUTASpotMarginTradeAutoRepayMode(Map<String, Object> request, BybitApiCallback<Object> callback);
+
+    void getUTASpotMarginTradeAutoRepayMode(Map<String, Object> request, BybitApiCallback<Object> callback);
 
     void getUTASpotMarginTradeLeverageState(BybitApiCallback<Object> callback);
 

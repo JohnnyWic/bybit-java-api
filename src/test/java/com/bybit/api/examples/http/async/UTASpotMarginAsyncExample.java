@@ -1,8 +1,9 @@
 package com.bybit.api.examples.http.async;
 
 import com.bybit.api.client.domain.spot.SpotMarginDataRequest;
-import com.bybit.api.client.domain.spot.SwitchStatus;
 import com.bybit.api.client.service.BybitApiClientFactory;
+
+import java.util.Map;
 
 public class UTASpotMarginAsyncExample {
     public static void main(String[] args) {
@@ -20,5 +21,16 @@ public class UTASpotMarginAsyncExample {
 
         // Set Status And Leverage
         client.getUTASpotMarginTradeLeverageState(System.out::println);
+
+        Map<String, Object> setUTASpotMarginTradeAutoRepayModeRequest = Map.ofEntries(
+                Map.entry("currency", "ETH"),
+                Map.entry("autoRepayMode", "1")
+        );
+        client.setUTASpotMarginTradeAutoRepayMode(setUTASpotMarginTradeAutoRepayModeRequest, System.out::println);
+
+        Map<String, Object> getUTASpotMarginTradeAutoRepayModeRequest = Map.ofEntries(
+                Map.entry("currency", "ETH")
+        );
+        client.getUTASpotMarginTradeAutoRepayMode(getUTASpotMarginTradeAutoRepayModeRequest, System.out::println);
     }
 }

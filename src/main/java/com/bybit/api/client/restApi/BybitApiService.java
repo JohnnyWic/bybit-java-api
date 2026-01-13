@@ -11,12 +11,11 @@ import com.bybit.api.client.domain.institution.insLending.UpdateInstitutionLoadU
 import com.bybit.api.client.domain.loan.request.CryptoLoanAdjustLtvRequest;
 import com.bybit.api.client.domain.loan.request.CryptoLoanBorrowRequest;
 import com.bybit.api.client.domain.loan.request.CryptoLoanRepayRequest;
-import com.bybit.api.client.domain.position.request.ConfirmNewRiskLimitRequest;
 import com.bybit.api.client.domain.position.request.*;
 import com.bybit.api.client.domain.spot.leverageToken.SpotLeverageTokenRequest;
 import com.bybit.api.client.domain.spot.marginTrade.SpotMarginTradeBorrowRequest;
 import com.bybit.api.client.domain.spot.marginTrade.SpotMarginTradeRePayRequest;
-import com.bybit.api.client.domain.trade.*;
+import com.bybit.api.client.domain.trade.OrderStatus;
 import com.bybit.api.client.domain.trade.request.*;
 import com.bybit.api.client.domain.user.request.CreateSubApiKeyRequest;
 import com.bybit.api.client.domain.user.request.FreezeSubUIDRquest;
@@ -4744,6 +4743,66 @@ public interface BybitApiService {
     @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
     @POST("/v5/spot-margin-trade/set-leverage")
     Call<Object> setUTASpotMarginTradeLeverage(@Body Map<String, String> leverage);
+
+    /**
+     * Set Auto Repay Mode
+     * Set spot automatic repayment mode
+     * <p>
+     * Covers: Margin trade (Unified Account)
+     * <p>
+     * INFO
+     * If currency is not passed, spot automatic repayment will be enabled for all currencies.
+     * If autoRepayMode of a currency is set to 1, the system will automatically make repayments without asset conversion to that currency at 0 and 30 minutes every hour.
+     * The amount of repayments without asset conversion is the minimum of available spot balance in that currency and liability of that currency.
+     * If you missed the automatic repayment batches for 0 and 30 minutes every hour, you can manually make the repayment via the API. Please refer to Manual Repay Without Asset Conversion
+     * <p>
+     * <a href="https://bybit-exchange.github.io/docs/v5/spot-margin-uta/set-auto-repay-mode">set-auto-repay-mode</a>
+     *
+     * @param request query parameters:
+     *                <ul>
+     *                  <li><b>currency</b> - string, Coin name, uppercase only.
+     *                      If currency is not passed, spot automatic repayment will be enabled for all currencies.</li>
+     *                  <li><b>autoRepayMode</b> - string, 1: On, 0: Off</li>
+     *                </ul>
+     *
+     * @return Response Parameters
+     * Parameter	Type	Comments
+     * data	array	Object
+     * > currency	string	Coin name, uppercase only.
+     * > autoRepayMode	string
+     * 1: On
+     * 0: Off
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @POST("/v5/spot-margin-trade/set-auto-repay-mode")
+    Call<Object> setUTASpotMarginTradeAutoRepayMode(@Body Map<String, Object> request);
+
+    /**
+     * GET Auto Repay Mode
+     * GET spot automatic repayment mode
+     * <p>
+     * Covers: Margin trade (Unified Account)
+     * <p>
+     * info
+     * If currency is not passed, automatic repay mode for all currencies will be returned.
+     * <p>
+     * <a href="https://bybit-exchange.github.io/docs/v5/spot-margin-uta/get-auto-repay-mode">get-auto-repay-mode</a>
+     *
+     * @param request query parameters:
+     *  <ul>
+     *       <li>currency - Coin name, uppercase only. If currency is not passed, automatic repay mode for all currencies will be returned.</li>
+     *  </ul>
+     * @return Response Parameters
+     * Parameter	Type	Comments
+     * data	array	Object
+     * > currency	string	Coin name, uppercase only.
+     * > autoRepayMode	string
+     * 1: On
+     * 0: Off
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @GET("/v5/spot-margin-trade/get-auto-repay-mode")
+    Call<Object> getUTASpotMarginTradeAutoRepayMode(@QueryMap Map<String, Object> request);
 
     /**
      * Get Status And Leverage

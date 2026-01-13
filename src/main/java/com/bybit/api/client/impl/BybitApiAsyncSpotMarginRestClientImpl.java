@@ -1,9 +1,9 @@
 package com.bybit.api.client.impl;
 
+import com.bybit.api.client.domain.spot.SpotMarginDataRequest;
 import com.bybit.api.client.restApi.BybitApiAsyncSpotMarginRestClient;
 import com.bybit.api.client.restApi.BybitApiCallback;
 import com.bybit.api.client.restApi.BybitApiService;
-import com.bybit.api.client.domain.spot.SpotMarginDataRequest;
 import com.bybit.api.client.service.BybitJsonConverter;
 
 import java.util.HashMap;
@@ -81,6 +81,16 @@ public class BybitApiAsyncSpotMarginRestClientImpl implements BybitApiAsyncSpotM
         Map<String, String> map = new HashMap<>();
         map.put("leverage", leverage);
         bybitApiService.setUTASpotMarginTradeLeverage(map).enqueue(new BybitApiCallbackAdapter<>(callback));
+    }
+
+    @Override
+    public void setUTASpotMarginTradeAutoRepayMode(Map<String, Object> utaMarginDataRequest, BybitApiCallback<Object> callback) {
+        bybitApiService.setUTASpotMarginTradeAutoRepayMode(utaMarginDataRequest).enqueue(new BybitApiCallbackAdapter<>(callback));
+    }
+
+    @Override
+    public void getUTASpotMarginTradeAutoRepayMode(Map<String, Object> utaMarginDataRequest, BybitApiCallback<Object> callback) {
+        bybitApiService.getUTASpotMarginTradeAutoRepayMode(utaMarginDataRequest).enqueue(new BybitApiCallbackAdapter<>(callback));
     }
 
     @Override
