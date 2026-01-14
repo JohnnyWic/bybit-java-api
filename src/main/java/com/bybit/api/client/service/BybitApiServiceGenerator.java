@@ -1,8 +1,8 @@
 package com.bybit.api.client.service;
 
-import com.bybit.api.client.restApi.BybitApiService;
 import com.bybit.api.client.exception.BybitApiError;
 import com.bybit.api.client.exception.BybitApiException;
+import com.bybit.api.client.restApi.BybitApiService;
 import com.bybit.api.client.security.AuthenticationInterceptor;
 import lombok.Getter;
 import okhttp3.Dispatcher;
@@ -92,7 +92,11 @@ public class BybitApiServiceGenerator {
         try {
             var response = call.execute();
             if (response.isSuccessful()) {
-                return response.body();
+                T body = response.body();
+                if (body == null) {
+                    throw new BybitApiException("Empty response body received from API");
+                }
+                return body;
             } else {
                 BybitApiError apiError = getBybitApiError(response);
                 throw new BybitApiException(apiError);
