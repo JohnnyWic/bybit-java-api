@@ -40,12 +40,12 @@ Maven Example
 <dependency>
     <groupId>io.github.johnnywic</groupId>
     <artifactId>bybit-java-api</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
 </dependency>
 ```
 Gradle Example
 ```java
-implementation group: 'io.github.johnnywic', name: 'bybit-java-api', version: '1.2.8'
+implementation group: 'io.github.johnnywic', name: 'bybit-java-api', version: '1.4.0'
 ```
 Furthermore, build tool, please check [sonar type central repository](https://central.sonatype.com/artifact/io.github.wuhewuhe/bybit-java-api/1.2.3)
 
