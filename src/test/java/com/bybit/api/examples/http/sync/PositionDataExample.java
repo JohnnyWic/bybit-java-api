@@ -34,5 +34,10 @@ public class PositionDataExample {
         var confirmNewRiskRequest = PositionDataRequest.builder().category(CategoryType.LINEAR).symbol("BTCUSDT").build();
         var confirmRiskLimitResult = client.confirmPositionRiskLimit(confirmNewRiskRequest);
         System.out.println(confirmRiskLimitResult);
+
+        // Get Closed Options Positions
+        var closedOptionsRequest = PositionDataRequest.builder().category(CategoryType.OPTION).build();
+        var closedOptionsResult = client.getClosedOptionsPositions(closedOptionsRequest);
+        System.out.println(closedOptionsResult);
     }
 }

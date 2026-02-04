@@ -32,4 +32,5 @@ public interface BybitApiSpotMarginRestClient {
     Object repayNormalSpotMarginTrade(SpotMarginDataRequest spotMarginDataRequest);
     Object getNormalSpotMarginTradeBorrowOrders(SpotMarginDataRequest spotMarginDataRequest);
     Object getNormalSpotMarginTradeRepayOrders(SpotMarginDataRequest spotMarginDataRequest);
+    Object getSpotMarginInterestRateHistory(SpotMarginDataRequest spotMarginDataRequest);
 }

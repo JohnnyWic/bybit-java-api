@@ -175,4 +175,14 @@ public class BybitApiSpotMarginRestClientImpl implements BybitApiSpotMarginRestC
                 spotMarginTradeRepayOrdersRequest.getLimit()
         ));
     }
+
+    @Override
+    public Object getSpotMarginInterestRateHistory(SpotMarginDataRequest spotMarginDataRequest) {
+        return executeSync(bybitApiService.getSpotMarginInterestRateHistory(
+                spotMarginDataRequest.getCurrency(),
+                spotMarginDataRequest.getVipLevel() != null ? spotMarginDataRequest.getVipLevel().getLevel() : null,
+                spotMarginDataRequest.getStartTime(),
+                spotMarginDataRequest.getEndTime()
+        ));
+    }
 }

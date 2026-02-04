@@ -51,4 +51,6 @@ public interface BybitApiAsyncSpotMarginRestClient {
     void getNormalSpotMarginTradeBorrowOrders(SpotMarginDataRequest spotMarginDataRequest, BybitApiCallback<Object> callback);
 
     void getNormalSpotMarginTradeRepayOrders(SpotMarginDataRequest spotMarginDataRequest, BybitApiCallback<Object> callback);
+
+    void getSpotMarginInterestRateHistory(SpotMarginDataRequest spotMarginDataRequest, BybitApiCallback<Object> callback);
 }

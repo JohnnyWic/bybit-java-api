@@ -1,5 +1,6 @@
 package com.bybit.api.examples.http.sync;
 
+import com.bybit.api.client.config.BybitApiConfig;
 import com.bybit.api.client.domain.spot.SpotMarginDataRequest;
 import com.bybit.api.client.service.BybitApiClientFactory;
 
@@ -7,7 +8,7 @@ import java.util.Map;
 
 public class UTASpotMarginExample {
     public static void main(String[] args) {
-        var client = BybitApiClientFactory.newInstance("YOUR_API_KEY", "YOUR_API_SECRET").newSpotMarginRestClient();
+        var client = BybitApiClientFactory.newInstance("YOUR_API_KEY", "YOUR_API_SECRET", BybitApiConfig.TESTNET_DOMAIN).newSpotMarginRestClient();
 
         // Get VIP Margin Data
         var utaMarginDataRequest = SpotMarginDataRequest.builder().build();
@@ -40,5 +41,10 @@ public class UTASpotMarginExample {
         );
         var getAutoRepayResponse = client.getUTASpotMarginTradeAutoRepayMode(getUTASpotMarginTradeAutoRepayModeRequest);
         System.out.println(getAutoRepayResponse);
+
+        // Get Interest Rate History
+        var interestRateRequest = SpotMarginDataRequest.builder().currency("USDT").build();
+        var interestRateResult = client.getSpotMarginInterestRateHistory(interestRateRequest);
+        System.out.println(interestRateResult);
     }
 }
