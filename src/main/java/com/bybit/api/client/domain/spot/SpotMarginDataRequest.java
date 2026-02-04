@@ -28,4 +28,5 @@ public class SpotMarginDataRequest {
     private final String spotMarginMode;
     private final SwitchStatus switchStatus;
     private final BorrowStatus borrowStatus;
+    private final String cursor;
 }

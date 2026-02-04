@@ -403,4 +403,28 @@ public class BybitApiClientFactory {
     public WebsocketStreamClient newWebsocketClient(int pingInterval, String maxAliveTime, WebSocketMessageCallback messageHandler) {
         return new WebsocketStreamClientImpl(apiKey, secret, baseUrl, pingInterval, maxAliveTime, debugMode, logOption, messageHandler);
     }
+
+    public BybitApiSpreadRestClient newSpreadRestClient() {
+        return new BybitApiSpreadRestClientImpl(apiKey, secret, baseUrl, debugMode, recvWindow, logOption, referer);
+    }
+
+    public BybitApiRfqRestClient newRfqRestClient() {
+        return new BybitApiRfqRestClientImpl(apiKey, secret, baseUrl, debugMode, recvWindow, logOption, referer);
+    }
+
+    public BybitApiAffiliateRestClient newAffiliateRestClient() {
+        return new BybitApiAffiliateRestClientImpl(apiKey, secret, baseUrl, debugMode, recvWindow, logOption, referer);
+    }
+
+    public BybitApiAsyncSpreadRestClient newAsyncSpreadRestClient() {
+        return new BybitApiAsyncSpreadRestClientImpl(apiKey, secret, baseUrl, debugMode, recvWindow, logOption, referer);
+    }
+
+    public BybitApiAsyncRfqRestClient newAsyncRfqRestClient() {
+        return new BybitApiAsyncRfqRestClientImpl(apiKey, secret, baseUrl, debugMode, recvWindow, logOption, referer);
+    }
+
+    public BybitApiAsyncAffiliateRestClient newAsyncAffiliateRestClient() {
+        return new BybitApiAsyncAffiliateRestClientImpl(apiKey, secret, baseUrl, debugMode, recvWindow, logOption, referer);
+    }
 }

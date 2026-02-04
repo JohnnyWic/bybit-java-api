@@ -266,4 +266,57 @@ public interface WebsocketStreamClient {
      * Topic: dcp
      * https://bybit-exchange.github.io/docs/v5/websocket/private/dcp
      */
+
+    /**
+     * Fast Execution
+     * Subscribe to the fast execution stream to see your executions in real-time with lower latency.
+     *
+     * This topic provides faster execution updates compared to the regular execution topic.
+     * Recommended for high-frequency trading scenarios where latency is critical.
+     *
+     * All-In-One Topic: execution.fast
+     * Categorised Topic: execution.fast.linear, execution.fast.inverse, execution.fast.spot, execution.fast.option
+     *
+     * INFO
+     * All-In-One topic and Categorised topic cannot be in the same subscription request
+     * Push frequency: real-time (lower latency than regular execution topic)
+     *
+     * https://bybit-exchange.github.io/docs/v5/websocket/private/execution
+     */
+
+    /**
+     * RFQ (Request For Quote)
+     * Subscribe to the RFQ stream to receive RFQ updates in real-time.
+     *
+     * This topic is for institutional traders using the RFQ (Request For Quote) system.
+     * You will receive updates when:
+     * - A new RFQ is created
+     * - An RFQ status changes
+     * - An RFQ is cancelled or expires
+     *
+     * Topic: rfq
+     *
+     * INFO
+     * This is a private channel topic. Authentication is required.
+     *
+     * https://bybit-exchange.github.io/docs/v5/websocket/private/rfq
+     */
+
+    /**
+     * Quote (RFQ Quote)
+     * Subscribe to the quote stream to receive quote updates for RFQs in real-time.
+     *
+     * This topic is for institutional traders using the RFQ (Request For Quote) system.
+     * You will receive updates when:
+     * - A new quote is created for your RFQ
+     * - A quote status changes
+     * - A quote is cancelled or expires
+     *
+     * Topic: quote
+     *
+     * INFO
+     * This is a private channel topic. Authentication is required.
+     *
+     * https://bybit-exchange.github.io/docs/v5/websocket/private/quote
+     */
 }

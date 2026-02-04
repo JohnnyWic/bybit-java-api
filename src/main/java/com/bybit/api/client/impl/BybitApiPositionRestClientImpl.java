@@ -116,4 +116,16 @@ public class BybitApiPositionRestClientImpl implements BybitApiPositionRestClien
         var confirmNewRiskLimitRequest = converter.mapToConfirmNewRiskLimitRequest(positionDataRequest);
         return executeSync(bybitApiService.confirmPositionRiskLimit(confirmNewRiskLimitRequest));
     }
+
+    @Override
+    public Object getClosedOptionsPositions(PositionDataRequest closedOptionsPositionsRequest) {
+        return executeSync(bybitApiService.getClosedOptionsPositions(
+                closedOptionsPositionsRequest.getCategory().getCategoryTypeId(),
+                closedOptionsPositionsRequest.getSymbol(),
+                closedOptionsPositionsRequest.getStartTime(),
+                closedOptionsPositionsRequest.getEndTime(),
+                closedOptionsPositionsRequest.getLimit(),
+                closedOptionsPositionsRequest.getCursor()
+        ));
+    }
 }

@@ -5719,4 +5719,828 @@ public interface BybitApiService {
             @Query("limit") String limit,
             @Query("cursor") String cursor
     );
+
+    // ========== Spread Trading - Market Data ==========
+
+    /**
+     * Get Spread Instruments Info
+     * Query for the spread instrument spec.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/spread/instrument
+     *
+     * @param baseCoin  false string  Base coin. Returns all spread instruments if not passed
+     * @param spreadType false string Spread type. leg1Price-leg2Price, leg1Price/leg2Price
+     * @param direction false string Direction
+     * @param limit     false integer Limit for data size per page. [1, 500]. Default: 500
+     * @param cursor    false string  Cursor for pagination
+     * @return Response Parameters
+     * Parameter         Type    Comments
+     * list              array   Object
+     * > spreadSymbol    string  Spread symbol
+     * > spreadType      string  Spread type
+     * > direction       string  Direction
+     * > leg1            Object  Leg1 info
+     * >> symbol         string  Symbol
+     * >> category       string  Product type
+     * > leg2            Object  Leg2 info
+     * >> symbol         string  Symbol
+     * >> category       string  Product type
+     * > status          string  Instrument status. PreLaunch, Trading, Closed
+     * > baseCoin        string  Base coin
+     * > lotSizeFilter   Object  Size attributes
+     * >> maxOrderQty    string  Max order qty
+     * >> minOrderQty    string  Min order qty
+     * >> qtyStep        string  Step of qty
+     * > priceFilter     Object  Price attributes
+     * >> tickSize       string  Tick size
+     * > launchTime      string  Launch timestamp (ms)
+     * nextPageCursor    string  Refer to the cursor request parameter
+     */
+    @GET("/v5/spread/instrument")
+    Call<Object> getSpreadInstrumentsInfo(
+            @Query("baseCoin") String baseCoin,
+            @Query("spreadType") String spreadType,
+            @Query("direction") String direction,
+            @Query("limit") Integer limit,
+            @Query("cursor") String cursor
+    );
+
+    /**
+     * Get Spread Orderbook
+     * Query for spread orderbook data.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/spread/orderbook
+     *
+     * @param spreadSymbol true  string Spread symbol
+     * @param limit        false integer Limit for data size. [1, 200]. Default: 25
+     * @return Response Parameters
+     * Parameter    Type    Comments
+     * s            string  Spread symbol
+     * b            array   Bid side (buy). Sort by price descending
+     * > [0]        string  Bid price
+     * > [1]        string  Bid size
+     * a            array   Ask side (sell). Sort by price ascending
+     * > [0]        string  Ask price
+     * > [1]        string  Ask size
+     * ts           number  Timestamp (ms)
+     * u            number  Update id
+     */
+    @GET("/v5/spread/orderbook")
+    Call<Object> getSpreadOrderbook(
+            @Query("symbol") String spreadSymbol,
+            @Query("limit") Integer limit
+    );
+
+    /**
+     * Get Spread Tickers
+     * Query for the latest price snapshot, best bid/ask price, and trading volume.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/spread/tickers
+     *
+     * @param spreadSymbol false string Spread symbol
+     * @param baseCoin     false string Base coin
+     * @return Response Parameters
+     * Parameter         Type    Comments
+     * list              array   Object
+     * > spreadSymbol    string  Spread symbol
+     * > lastPrice       string  Last traded price
+     * > highPrice24h    string  Highest price in last 24h
+     * > lowPrice24h     string  Lowest price in last 24h
+     * > prevPrice24h    string  Price 24 hours ago
+     * > price24hPcnt    string  Percentage change of market price in the last 24 hours
+     * > bid1Price       string  Best bid price
+     * > bid1Size        string  Best bid size
+     * > ask1Price       string  Best ask price
+     * > ask1Size        string  Best ask size
+     * > volume24h       string  Trading volume in the last 24 hours
+     * > turnover24h     string  Trading turnover in the last 24 hours (in base coin)
+     */
+    @GET("/v5/spread/tickers")
+    Call<Object> getSpreadTickers(
+            @Query("symbol") String spreadSymbol,
+            @Query("baseCoin") String baseCoin
+    );
+
+    /**
+     * Get Spread Recent Public Trades
+     * Query for recent public trading records.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/spread/recent-trade
+     *
+     * @param spreadSymbol true  string  Spread symbol
+     * @param baseCoin     false string  Base coin
+     * @param limit        false integer Limit for data size per page. [1, 1000]. Default: 500
+     * @return Response Parameters
+     * Parameter      Type    Comments
+     * list           array   Object
+     * > spreadSymbol string  Spread symbol
+     * > execId       string  Execution ID
+     * > execPrice    string  Execution price
+     * > execQty      string  Execution qty
+     * > side         string  Side of taker. Buy,Sell
+     * > execTime     string  Executed timestamp (ms)
+     */
+    @GET("/v5/spread/recent-trade")
+    Call<Object> getSpreadRecentTrades(
+            @Query("symbol") String spreadSymbol,
+            @Query("baseCoin") String baseCoin,
+            @Query("limit") Integer limit
+    );
+
+    // ========== Spread Trading - Trade ==========
+
+    /**
+     * Create Spread Order
+     * Create spread trading order.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/spread/trade/create-order
+     *
+     * @param spreadSymbol true  string  Spread symbol
+     * @param side         true  string  Side. Buy,Sell
+     * @param orderType    true  string  Order type. Limit
+     * @param qty          true  string  Order qty
+     * @param price        true  string  Order price
+     * @param timeInForce  false string  Time in force. GTC,IOC,FOK. Default: GTC
+     * @param orderLinkId  false string  User customised order ID
+     * @return Response Parameters
+     * Parameter    Type    Comments
+     * orderId      string  Order ID
+     * orderLinkId  string  User customised order ID
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @POST("/v5/spread/order/create")
+    Call<Object> createSpreadOrder(@Body Map<String, Object> request);
+
+    /**
+     * Amend Spread Order
+     * Amend spread trading order. Only unfilled orders can be amended.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/spread/trade/amend-order
+     *
+     * @param orderId     false string Order ID. Either orderId or orderLinkId is required
+     * @param orderLinkId false string User customised order ID. Either orderId or orderLinkId is required
+     * @param qty         false string Order qty
+     * @param price       false string Order price
+     * @return Response Parameters
+     * Parameter    Type    Comments
+     * orderId      string  Order ID
+     * orderLinkId  string  User customised order ID
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @POST("/v5/spread/order/amend")
+    Call<Object> amendSpreadOrder(@Body Map<String, Object> request);
+
+    /**
+     * Cancel Spread Order
+     * Cancel spread trading order.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/spread/trade/cancel-order
+     *
+     * @param orderId     false string Order ID. Either orderId or orderLinkId is required
+     * @param orderLinkId false string User customised order ID. Either orderId or orderLinkId is required
+     * @return Response Parameters
+     * Parameter    Type    Comments
+     * orderId      string  Order ID
+     * orderLinkId  string  User customised order ID
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @POST("/v5/spread/order/cancel")
+    Call<Object> cancelSpreadOrder(@Body Map<String, Object> request);
+
+    /**
+     * Cancel All Spread Orders
+     * Cancel all spread trading orders.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/spread/trade/cancel-all
+     *
+     * @param spreadSymbol false string Spread symbol. If not passed, all spread orders will be cancelled
+     * @param baseCoin     false string Base coin
+     * @return Response Parameters
+     * Parameter    Type    Comments
+     * success      string  Cancel result. 1: success, 0: fail
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @POST("/v5/spread/order/cancel-all")
+    Call<Object> cancelAllSpreadOrders(@Body Map<String, Object> request);
+
+    /**
+     * Get Spread Open Orders
+     * Query open spread orders.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/spread/trade/open-order
+     *
+     * @param spreadSymbol false string Spread symbol
+     * @param baseCoin     false string Base coin
+     * @param orderId      false string Order ID
+     * @param orderLinkId  false string User customised order ID
+     * @param limit        false integer Limit for data size per page. [1, 50]. Default: 20
+     * @param cursor       false string Cursor for pagination
+     * @return Response Parameters
+     * Parameter         Type    Comments
+     * list              array   Object
+     * > spreadSymbol    string  Spread symbol
+     * > orderId         string  Order ID
+     * > orderLinkId     string  User customised order ID
+     * > side            string  Side. Buy,Sell
+     * > orderType       string  Order type
+     * > price           string  Order price
+     * > qty             string  Order qty
+     * > leavesQty       string  Remaining order qty
+     * > cumExecQty      string  Cumulative executed qty
+     * > cumExecValue    string  Cumulative executed value
+     * > timeInForce     string  Time in force
+     * > orderStatus     string  Order status
+     * > createdTime     string  Order created timestamp (ms)
+     * > updatedTime     string  Order updated timestamp (ms)
+     * nextPageCursor    string  Refer to the cursor request parameter
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @GET("/v5/spread/order/realtime")
+    Call<Object> getSpreadOpenOrders(
+            @Query("spreadSymbol") String spreadSymbol,
+            @Query("baseCoin") String baseCoin,
+            @Query("orderId") String orderId,
+            @Query("orderLinkId") String orderLinkId,
+            @Query("limit") Integer limit,
+            @Query("cursor") String cursor
+    );
+
+    /**
+     * Get Spread Order History
+     * Query spread order history.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/spread/trade/order-history
+     *
+     * @param spreadSymbol false string Spread symbol
+     * @param baseCoin     false string Base coin
+     * @param orderId      false string Order ID
+     * @param orderLinkId  false string User customised order ID
+     * @param startTime    false long   Start timestamp (ms). Default: 7 days before
+     * @param endTime      false long   End timestamp (ms). Default: current time
+     * @param limit        false integer Limit for data size per page. [1, 50]. Default: 20
+     * @param cursor       false string Cursor for pagination
+     * @return Response Parameters
+     * Parameter         Type    Comments
+     * list              array   Object
+     * > spreadSymbol    string  Spread symbol
+     * > orderId         string  Order ID
+     * > orderLinkId     string  User customised order ID
+     * > side            string  Side. Buy,Sell
+     * > orderType       string  Order type
+     * > price           string  Order price
+     * > qty             string  Order qty
+     * > leavesQty       string  Remaining order qty
+     * > cumExecQty      string  Cumulative executed qty
+     * > cumExecValue    string  Cumulative executed value
+     * > timeInForce     string  Time in force
+     * > orderStatus     string  Order status
+     * > createdTime     string  Order created timestamp (ms)
+     * > updatedTime     string  Order updated timestamp (ms)
+     * nextPageCursor    string  Refer to the cursor request parameter
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @GET("/v5/spread/order/history")
+    Call<Object> getSpreadOrderHistory(
+            @Query("spreadSymbol") String spreadSymbol,
+            @Query("baseCoin") String baseCoin,
+            @Query("orderId") String orderId,
+            @Query("orderLinkId") String orderLinkId,
+            @Query("startTime") Long startTime,
+            @Query("endTime") Long endTime,
+            @Query("limit") Integer limit,
+            @Query("cursor") String cursor
+    );
+
+    /**
+     * Get Spread Trade History
+     * Query spread trade history (executions).
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/spread/trade/execution-list
+     *
+     * @param spreadSymbol false string Spread symbol
+     * @param baseCoin     false string Base coin
+     * @param orderId      false string Order ID
+     * @param startTime    false long   Start timestamp (ms). Default: 7 days before
+     * @param endTime      false long   End timestamp (ms). Default: current time
+     * @param limit        false integer Limit for data size per page. [1, 100]. Default: 20
+     * @param cursor       false string Cursor for pagination
+     * @return Response Parameters
+     * Parameter         Type    Comments
+     * list              array   Object
+     * > spreadSymbol    string  Spread symbol
+     * > orderId         string  Order ID
+     * > orderLinkId     string  User customised order ID
+     * > execId          string  Execution ID
+     * > side            string  Side. Buy,Sell
+     * > execPrice       string  Execution price
+     * > execQty         string  Execution qty
+     * > execValue       string  Execution value
+     * > execTime        string  Executed timestamp (ms)
+     * > feeRate         string  Trading fee rate
+     * > execFee         string  Execution trading fee
+     * > leg1            Object  Leg1 execution info
+     * >> symbol         string  Symbol
+     * >> category       string  Product type
+     * >> side           string  Side
+     * >> execPrice      string  Execution price
+     * >> execQty        string  Execution qty
+     * >> execValue      string  Execution value
+     * > leg2            Object  Leg2 execution info
+     * >> symbol         string  Symbol
+     * >> category       string  Product type
+     * >> side           string  Side
+     * >> execPrice      string  Execution price
+     * >> execQty        string  Execution qty
+     * >> execValue      string  Execution value
+     * nextPageCursor    string  Refer to the cursor request parameter
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @GET("/v5/spread/execution/list")
+    Call<Object> getSpreadTradeHistory(
+            @Query("spreadSymbol") String spreadSymbol,
+            @Query("baseCoin") String baseCoin,
+            @Query("orderId") String orderId,
+            @Query("startTime") Long startTime,
+            @Query("endTime") Long endTime,
+            @Query("limit") Integer limit,
+            @Query("cursor") String cursor
+    );
+
+    // ========== Position - Closed Options Positions ==========
+
+    /**
+     * Get Closed Options Positions
+     * Query closed options positions.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/position/close-position
+     *
+     * @param category  true  string  Product type. option
+     * @param symbol    false string  Symbol name
+     * @param startTime false long    Start timestamp (ms). Default: 7 days before
+     * @param endTime   false long    End timestamp (ms). Default: current time
+     * @param limit     false integer Limit for data size per page. [1, 50]. Default: 20
+     * @param cursor    false string  Cursor for pagination
+     * @return Response Parameters
+     * Parameter         Type    Comments
+     * category          string  Product type
+     * list              array   Object
+     * > symbol          string  Symbol name
+     * > side            string  Position side. Buy,Sell
+     * > qty             string  Closed qty
+     * > entryPrice      string  Average entry price
+     * > leverage        string  leverage
+     * > sessionAvgPrice string  Settlement price
+     * > closedPnl       string  Closed PnL
+     * > orderId         string  Order ID that triggered this close
+     * > createdTime     string  Position created timestamp (ms)
+     * > updatedTime     string  Position updated timestamp (ms)
+     * nextPageCursor    string  Refer to the cursor request parameter
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @GET("/v5/position/get-closed-positions")
+    Call<Object> getClosedOptionsPositions(
+            @Query("category") String category,
+            @Query("symbol") String symbol,
+            @Query("startTime") Long startTime,
+            @Query("endTime") Long endTime,
+            @Query("limit") Integer limit,
+            @Query("cursor") String cursor
+    );
+
+    // ========== Affiliate ==========
+
+    /**
+     * Get Affiliate User List
+     * Query affiliate user list.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/affiliate/affiliate-user-list
+     *
+     * @param uid    true  string  UID
+     * @param page   false integer Page number. Default: 1
+     * @param size   false integer Page size. [10, 50]. Default: 10
+     * @return Response Parameters
+     * Parameter         Type    Comments
+     * totalCount        integer Total count
+     * list              array   Object
+     * > uid             string  Affiliated user UID
+     * > kycLevel        integer KYC level. 0: No KYC, 1: Basic, 2: Advanced
+     * > vipLevel        string  VIP level
+     * > registerTime    string  Register time
+     * > depositStatus   integer Deposit status. 0: No, 1: Yes
+     * > tradeStatus     integer Trade status. 0: No, 1: Yes
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @GET("/v5/affiliate/aff-user-list")
+    Call<Object> getAffiliateUserList(
+            @Query("uid") String uid,
+            @Query("page") Integer page,
+            @Query("size") Integer size
+    );
+
+    // ========== Spot Margin Trade - Interest Rate History ==========
+
+    /**
+     * Get Interest Rate History (VIP/PRO)
+     * Query interest rate history for VIP/PRO margin traders (Unified account only).
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/spot-margin-uta/historical-interest
+     *
+     * @param currency  true  string  Coin name (e.g., "USDT")
+     * @param vipLevel  false string  VIP level (e.g., "No VIP", "VIP-1"). Use account VIP level if not provided
+     * @param startTime false long    Start timestamp (ms). Must be used with endTime
+     * @param endTime   false long    End timestamp (ms). Must be used with startTime. Max 30 days
+     * @return Response Parameters
+     * Parameter         Type    Comments
+     * list              array   Object
+     * > currency        string  Coin name
+     * > hourlyBorrowRate string Hourly borrow rate
+     * > timestamp       long    Timestamp (ms)
+     * > vipLevel        string  VIP level
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @GET("/v5/spot-margin-trade/interest-rate-history")
+    Call<Object> getSpotMarginInterestRateHistory(
+            @Query("currency") String currency,
+            @Query("vipLevel") String vipLevel,
+            @Query("startTime") Long startTime,
+            @Query("endTime") Long endTime
+    );
+
+    // ========== RFQ Trading ==========
+
+    /**
+     * Create RFQ
+     * Create a Request For Quote.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/rfq/trade/create-rfq
+     *
+     * @param legs          true  array   Request legs
+     * @param counterparties false array  Counterparty list. If not passed, broadcast to all makers
+     * @param rfqLinkId     false string  User customised RFQ ID
+     * @return Response Parameters
+     * Parameter    Type    Comments
+     * rfqId        string  RFQ ID
+     * rfqLinkId    string  User customised RFQ ID
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @POST("/v5/rfq/create-rfq")
+    Call<Object> createRfq(@Body Map<String, Object> request);
+
+    /**
+     * Get RFQ Configuration
+     * Query RFQ configuration.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/rfq/config
+     *
+     * @return Response Parameters
+     * Parameter           Type    Comments
+     * role                string  Current account role. taker,maker
+     * maxLegs             integer Max legs allowed per RFQ
+     * maxOrderPerLeg      integer Max order qty per leg
+     * maxQtyPerSymbol     Object  Max qty per symbol
+     * > symbol            string  Symbol
+     * > maxOrderQty       string  Max order qty
+     * counterparties      array   Counterparty list
+     * > userId            string  Counterparty user ID
+     * > name              string  Counterparty name
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @GET("/v5/rfq/config")
+    Call<Object> getRfqConfig();
+
+    /**
+     * Cancel RFQ
+     * Cancel an RFQ.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/rfq/trade/cancel-rfq
+     *
+     * @param rfqId     false string RFQ ID. Either rfqId or rfqLinkId is required
+     * @param rfqLinkId false string User customised RFQ ID. Either rfqId or rfqLinkId is required
+     * @return Response Parameters
+     * Parameter    Type    Comments
+     * rfqId        string  RFQ ID
+     * rfqLinkId    string  User customised RFQ ID
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @POST("/v5/rfq/cancel-rfq")
+    Call<Object> cancelRfq(@Body Map<String, Object> request);
+
+    /**
+     * Cancel All RFQs
+     * Cancel all RFQs.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/rfq/trade/cancel-all-rfq
+     *
+     * @param baseCoin false string Base coin. Cancel all RFQs if not passed
+     * @return Response Parameters
+     * Parameter    Type    Comments
+     * success      string  Cancel result. 1: success, 0: fail
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @POST("/v5/rfq/cancel-all-rfq")
+    Call<Object> cancelAllRfq(@Body Map<String, Object> request);
+
+    /**
+     * Create Quote
+     * Create a quote for an RFQ (maker only).
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/rfq/trade/create-quote
+     *
+     * @param rfqId       true  string RFQ ID
+     * @param legs        true  array  Quote legs with price
+     * @param quoteLinkId false string User customised quote ID
+     * @return Response Parameters
+     * Parameter    Type    Comments
+     * quoteId      string  Quote ID
+     * quoteLinkId  string  User customised quote ID
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @POST("/v5/rfq/create-quote")
+    Call<Object> createRfqQuote(@Body Map<String, Object> request);
+
+    /**
+     * Execute Quote
+     * Execute a quote to complete the RFQ trade (taker only).
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/rfq/trade/execute-quote
+     *
+     * @param rfqId   true string RFQ ID
+     * @param quoteId true string Quote ID
+     * @return Response Parameters
+     * Parameter    Type    Comments
+     * rfqId        string  RFQ ID
+     * quoteId      string  Quote ID
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @POST("/v5/rfq/execute-quote")
+    Call<Object> executeRfqQuote(@Body Map<String, Object> request);
+
+    /**
+     * Cancel Quote
+     * Cancel a quote (maker only).
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/rfq/trade/cancel-quote
+     *
+     * @param quoteId     false string Quote ID. Either quoteId or quoteLinkId is required
+     * @param quoteLinkId false string User customised quote ID. Either quoteId or quoteLinkId is required
+     * @return Response Parameters
+     * Parameter    Type    Comments
+     * quoteId      string  Quote ID
+     * quoteLinkId  string  User customised quote ID
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @POST("/v5/rfq/cancel-quote")
+    Call<Object> cancelRfqQuote(@Body Map<String, Object> request);
+
+    /**
+     * Cancel All Quotes
+     * Cancel all quotes (maker only).
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/rfq/trade/cancel-all-quotes
+     *
+     * @param baseCoin false string Base coin. Cancel all quotes if not passed
+     * @return Response Parameters
+     * Parameter    Type    Comments
+     * success      string  Cancel result. 1: success, 0: fail
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @POST("/v5/rfq/cancel-all-quotes")
+    Call<Object> cancelAllRfqQuotes(@Body Map<String, Object> request);
+
+    /**
+     * Get RFQs (Realtime)
+     * Query realtime open RFQs.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/rfq/rfq-realtime
+     *
+     * @param rfqId     false string RFQ ID
+     * @param rfqLinkId false string User customised RFQ ID
+     * @param baseCoin  false string Base coin
+     * @param limit     false integer Limit for data size per page. [1, 100]. Default: 25
+     * @param cursor    false string Cursor for pagination
+     * @return Response Parameters
+     * Parameter         Type    Comments
+     * list              array   Object
+     * > rfqId           string  RFQ ID
+     * > rfqLinkId       string  User customised RFQ ID
+     * > baseCoin        string  Base coin
+     * > legs            array   RFQ legs
+     * >> symbol         string  Symbol
+     * >> side           string  Side. Buy,Sell
+     * >> qty            string  Qty
+     * > status          string  RFQ status
+     * > createdTime     string  Created timestamp (ms)
+     * > updatedTime     string  Updated timestamp (ms)
+     * > expireTime      string  Expire timestamp (ms)
+     * nextPageCursor    string  Refer to the cursor request parameter
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @GET("/v5/rfq/rfq-realtime")
+    Call<Object> getRfqRealtime(
+            @Query("rfqId") String rfqId,
+            @Query("rfqLinkId") String rfqLinkId,
+            @Query("baseCoin") String baseCoin,
+            @Query("limit") Integer limit,
+            @Query("cursor") String cursor
+    );
+
+    /**
+     * Get RFQs (History)
+     * Query RFQ history.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/rfq/rfq-list
+     *
+     * @param rfqId     false string RFQ ID
+     * @param rfqLinkId false string User customised RFQ ID
+     * @param baseCoin  false string Base coin
+     * @param startTime false long   Start timestamp (ms)
+     * @param endTime   false long   End timestamp (ms)
+     * @param limit     false integer Limit for data size per page. [1, 100]. Default: 25
+     * @param cursor    false string Cursor for pagination
+     * @return Response Parameters
+     * Parameter         Type    Comments
+     * list              array   Object
+     * > rfqId           string  RFQ ID
+     * > rfqLinkId       string  User customised RFQ ID
+     * > baseCoin        string  Base coin
+     * > legs            array   RFQ legs
+     * >> symbol         string  Symbol
+     * >> side           string  Side. Buy,Sell
+     * >> qty            string  Qty
+     * > status          string  RFQ status
+     * > createdTime     string  Created timestamp (ms)
+     * > updatedTime     string  Updated timestamp (ms)
+     * nextPageCursor    string  Refer to the cursor request parameter
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @GET("/v5/rfq/rfq-list")
+    Call<Object> getRfqHistory(
+            @Query("rfqId") String rfqId,
+            @Query("rfqLinkId") String rfqLinkId,
+            @Query("baseCoin") String baseCoin,
+            @Query("startTime") Long startTime,
+            @Query("endTime") Long endTime,
+            @Query("limit") Integer limit,
+            @Query("cursor") String cursor
+    );
+
+    /**
+     * Get Quotes (Realtime)
+     * Query realtime quotes.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/rfq/quote-realtime
+     *
+     * @param quoteId     false string Quote ID
+     * @param quoteLinkId false string User customised quote ID
+     * @param baseCoin    false string Base coin
+     * @param rfqId       false string RFQ ID
+     * @param limit       false integer Limit for data size per page. [1, 100]. Default: 25
+     * @param cursor      false string Cursor for pagination
+     * @return Response Parameters
+     * Parameter         Type    Comments
+     * list              array   Object
+     * > quoteId         string  Quote ID
+     * > quoteLinkId     string  User customised quote ID
+     * > rfqId           string  RFQ ID
+     * > baseCoin        string  Base coin
+     * > legs            array   Quote legs
+     * >> symbol         string  Symbol
+     * >> side           string  Side. Buy,Sell
+     * >> qty            string  Qty
+     * >> price          string  Price
+     * > status          string  Quote status
+     * > createdTime     string  Created timestamp (ms)
+     * > updatedTime     string  Updated timestamp (ms)
+     * > expireTime      string  Expire timestamp (ms)
+     * nextPageCursor    string  Refer to the cursor request parameter
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @GET("/v5/rfq/quote-realtime")
+    Call<Object> getQuotesRealtime(
+            @Query("quoteId") String quoteId,
+            @Query("quoteLinkId") String quoteLinkId,
+            @Query("baseCoin") String baseCoin,
+            @Query("rfqId") String rfqId,
+            @Query("limit") Integer limit,
+            @Query("cursor") String cursor
+    );
+
+    /**
+     * Get Quotes (History)
+     * Query quote history.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/rfq/quote-list
+     *
+     * @param quoteId     false string Quote ID
+     * @param quoteLinkId false string User customised quote ID
+     * @param baseCoin    false string Base coin
+     * @param rfqId       false string RFQ ID
+     * @param startTime   false long   Start timestamp (ms)
+     * @param endTime     false long   End timestamp (ms)
+     * @param limit       false integer Limit for data size per page. [1, 100]. Default: 25
+     * @param cursor      false string Cursor for pagination
+     * @return Response Parameters
+     * Parameter         Type    Comments
+     * list              array   Object
+     * > quoteId         string  Quote ID
+     * > quoteLinkId     string  User customised quote ID
+     * > rfqId           string  RFQ ID
+     * > baseCoin        string  Base coin
+     * > legs            array   Quote legs
+     * >> symbol         string  Symbol
+     * >> side           string  Side. Buy,Sell
+     * >> qty            string  Qty
+     * >> price          string  Price
+     * > status          string  Quote status
+     * > createdTime     string  Created timestamp (ms)
+     * > updatedTime     string  Updated timestamp (ms)
+     * nextPageCursor    string  Refer to the cursor request parameter
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @GET("/v5/rfq/quote-list")
+    Call<Object> getQuotesHistory(
+            @Query("quoteId") String quoteId,
+            @Query("quoteLinkId") String quoteLinkId,
+            @Query("baseCoin") String baseCoin,
+            @Query("rfqId") String rfqId,
+            @Query("startTime") Long startTime,
+            @Query("endTime") Long endTime,
+            @Query("limit") Integer limit,
+            @Query("cursor") String cursor
+    );
+
+    /**
+     * Get RFQ Trade History
+     * Query RFQ trade history.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/rfq/trade-list
+     *
+     * @param baseCoin  false string Base coin
+     * @param rfqId     false string RFQ ID
+     * @param quoteId   false string Quote ID
+     * @param startTime false long   Start timestamp (ms)
+     * @param endTime   false long   End timestamp (ms)
+     * @param limit     false integer Limit for data size per page. [1, 100]. Default: 25
+     * @param cursor    false string Cursor for pagination
+     * @return Response Parameters
+     * Parameter         Type    Comments
+     * list              array   Object
+     * > rfqId           string  RFQ ID
+     * > quoteId         string  Quote ID
+     * > baseCoin        string  Base coin
+     * > legs            array   Trade legs
+     * >> symbol         string  Symbol
+     * >> category       string  Product type
+     * >> side           string  Side. Buy,Sell
+     * >> qty            string  Qty
+     * >> price          string  Price
+     * >> execId         string  Execution ID
+     * >> feeRate        string  Fee rate
+     * >> execFee        string  Execution fee
+     * > tradeTime       string  Trade timestamp (ms)
+     * nextPageCursor    string  Refer to the cursor request parameter
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @GET("/v5/rfq/trade-list")
+    Call<Object> getRfqTradeHistory(
+            @Query("baseCoin") String baseCoin,
+            @Query("rfqId") String rfqId,
+            @Query("quoteId") String quoteId,
+            @Query("startTime") Long startTime,
+            @Query("endTime") Long endTime,
+            @Query("limit") Integer limit,
+            @Query("cursor") String cursor
+    );
+
+    /**
+     * Get RFQ Public Trades
+     * Query public RFQ trades.
+     * <p>
+     * https://bybit-exchange.github.io/docs/v5/rfq/public-trades
+     *
+     * @param baseCoin false string Base coin
+     * @param category false string Product type. option
+     * @param limit    false integer Limit for data size per page. [1, 100]. Default: 25
+     * @param cursor   false string Cursor for pagination
+     * @return Response Parameters
+     * Parameter         Type    Comments
+     * list              array   Object
+     * > baseCoin        string  Base coin
+     * > legs            array   Trade legs
+     * >> symbol         string  Symbol
+     * >> category       string  Product type
+     * >> side           string  Side. Buy,Sell
+     * >> qty            string  Qty
+     * >> price          string  Price
+     * > tradeTime       string  Trade timestamp (ms)
+     * nextPageCursor    string  Refer to the cursor request parameter
+     */
+    @Headers(BybitApiConstants.ENDPOINT_SECURITY_TYPE_SIGNED_HEADER)
+    @GET("/v5/rfq/public-trades")
+    Call<Object> getRfqPublicTrades(
+            @Query("baseCoin") String baseCoin,
+            @Query("category") String category,
+            @Query("limit") Integer limit,
+            @Query("cursor") String cursor
+    );
 }

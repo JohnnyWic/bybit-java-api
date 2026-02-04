@@ -20,4 +20,5 @@ public interface BybitApiAsyncPositionRestClient {
     void getMovePositionHistory(PositionDataRequest movePositionHistoryRequest, BybitApiCallback<Object> callback);
     void batchMovePositions(BatchMovePositionRequest batchMovePositionRequest, BybitApiCallback<Object> callback);
     void confirmPositionRiskLimit(PositionDataRequest confirmNewRiskLimitRequest, BybitApiCallback<Object> callback);
+    void getClosedOptionsPositions(PositionDataRequest closedOptionsPositionsRequest, BybitApiCallback<Object> callback);
 }

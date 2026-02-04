@@ -120,4 +120,16 @@ public class BybitApiAsyncPositionRestClientImpl implements BybitApiAsyncPositio
         var confirmNewRiskLimitRequest = converter.mapToConfirmNewRiskLimitRequest(positionDataRequest);
         bybitApiService.confirmPositionRiskLimit(confirmNewRiskLimitRequest).enqueue(new BybitApiCallbackAdapter<>(callback));
     }
+
+    @Override
+    public void getClosedOptionsPositions(PositionDataRequest closedOptionsPositionsRequest, BybitApiCallback<Object> callback) {
+        bybitApiService.getClosedOptionsPositions(
+                closedOptionsPositionsRequest.getCategory().getCategoryTypeId(),
+                closedOptionsPositionsRequest.getSymbol(),
+                closedOptionsPositionsRequest.getStartTime(),
+                closedOptionsPositionsRequest.getEndTime(),
+                closedOptionsPositionsRequest.getLimit(),
+                closedOptionsPositionsRequest.getCursor()
+        ).enqueue(new BybitApiCallbackAdapter<>(callback));
+    }
 }
